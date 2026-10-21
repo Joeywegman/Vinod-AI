@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+:root { --bg: #04070d; --cyan: #22d3ee; --warm: #ff8a3d; }
+html { background: var(--bg); }
+body { margin: 0; background: var(--bg); color: #cfe9f5; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; overflow-x: hidden; }
+
+.hud { position: fixed; inset: 0; pointer-events: none; }
+.hint { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); font-size: 11px; letter-spacing: .5em; color: var(--cyan); transition: opacity .6s; animation: bob 2s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translate(-50%, 6px); } }
+.rail { position: absolute; right: 16px; top: 50%; height: 120px; width: 2px; margin-top: -60px; background: rgba(34, 211, 238, .15); }
+.rail i { display: block; width: 100%; background: linear-gradient(var(--cyan), var(--warm)); box-shadow: 0 0 10px var(--cyan); }
+
+.poster { position: fixed; inset: 0; display: grid; place-items: center; overflow: hidden;
+  background: radial-gradient(ellipse at 50% 60%, rgba(34, 211, 238, .22), transparent 55%), radial-gradient(ellipse at 50% 100%, rgba(255, 138, 61, .18), transparent 50%), var(--bg); }
+.poster-grid { position: absolute; left: -50%; right: -50%; bottom: 0; height: 60%; transform: perspective(500px) rotateX(62deg); transform-origin: bottom;
+  background-image: linear-gradient(rgba(34, 211, 238, .35) 1px, transparent 1px), linear-gradient(90deg, rgba(34, 211, 238, .35) 1px, transparent 1px); background-size: 48px 48px;
+  mask-image: linear-gradient(transparent, #000); }
+.poster-title { position: relative; font-family: "Arial Black", Impact, sans-serif; font-weight: 900; font-size: clamp(40px, 12vw, 180px); letter-spacing: .04em; margin: 0;
+  color: transparent; background: linear-gradient(180deg, #fff, var(--cyan)); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 0 24px rgba(34, 211, 238, .55)); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
