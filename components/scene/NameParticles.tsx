@@ -67,11 +67,13 @@ varying vec3 vColor; varying float vAlpha;
 void main(){
   float d = length(gl_PointCoord - .5);
   float a = 1. - smoothstep(.0, .5, d);
-  gl_FragColor = vec4(vColor * 1.0, vAlpha * a);
+  gl_FragColor = vec4(vColor * 0.7, vAlpha * a);
   #include <colorspace_fragment>
 }`;
 
-export default function NameParticles({ q }: { q: Quality }) {
+const OUTRO_POS: [number, number, number] = [0, 3.2, -178];
+
+export default function NameParticles({ q, outro = false }: { q: Quality; outro?: boolean }) {
   const ref = useRef<THREE.Points>(null);
   const { viewport } = useThree();
   const { geo, mat } = useMemo(() => {
@@ -80,12 +82,13 @@ export default function NameParticles({ q }: { q: Quality }) {
     const start = new Float32Array(n * 3);
     const rand = new Float32Array(n * 4);
     for (let i = 0; i < n; i++) {
-      const r = 28 + Math.random() * 45;
+      const r = outro ? 0.5 + Math.random() * 5 : 28 + Math.random() * 45;
       const th = Math.random() * Math.PI * 2;
       const ph = Math.acos(2 * Math.random() - 1);
       start[i * 3] = r * Math.sin(ph) * Math.cos(th);
-      start[i * 3 + 1] = r * Math.sin(ph) * Math.sin(th) * 0.7;
-      start[i * 3 + 2] = r * Math.cos(ph) - 20;
+      start[i * 3 + 1] = r * Math.sin(ph) * Math.sin(th) * (outro ? 1 : 0.7);
+      // outro: burst out of the core, which sits 8 units behind the name
+      start[i * 3 + 2] = r * Math.cos(ph) - (outro ? 8 : 20);
       for (let k = 0; k < 4; k++) rand[i * 4 + k] = Math.random();
     }
     const g = new THREE.BufferGeometry();
@@ -100,7 +103,7 @@ export default function NameParticles({ q }: { q: Quality }) {
       { transparent: true, depthWrite: false, blending: THREE.AdditiveBlending },
     );
     return { geo: g, mat: m };
-  }, [q.name]);
+  }, [q.name, outro]);
 
   const t0 = useRef<number | null>(null);
   useFrame((state) => {
@@ -114,15 +117,20 @@ export default function NameParticles({ q }: { q: Quality }) {
       return t * t * (3 - 2 * t);
     };
     const p = scrollState.s;
-    const form = Math.max(auto * auto * 0.4, ss(0, 0.075, p));
-    mat.uniforms.uForm.value = form;
-    mat.uniforms.uDisperse.value = ss(0.105, 0.17, p);
     mat.uniforms.uPixel.value = state.gl.getPixelRatio();
-    const vw = state.camera.position.z > 0 ? viewport.getCurrentViewport(state.camera, [0, 0, 0]).width : 100;
-    const sc = Math.min(1, (vw * 0.82) / W);
-    pts.scale.setScalar(sc);
-    pts.visible = p < 0.2;
+    if (outro) {
+      mat.uniforms.uForm.value = ss(0.9, 0.985, p);
+      pts.visible = p > 0.88;
+    } else {
+      mat.uniforms.uForm.value = Math.max(auto * auto * 0.4, ss(0, 0.075, p));
+      mat.uniforms.uDisperse.value = ss(0.105, 0.17, p);
+      pts.visible = p < 0.2;
+    }
+    if (pts.visible) {
+      const vw = viewport.getCurrentViewport(state.camera, pts.position).width;
+      pts.scale.setScalar(Math.min(1, (vw * 0.82) / W));
+    }
   });
 
-  return <points ref={ref} geometry={geo} material={mat} position={[0, 1.7, 0]} frustumCulled={false} />;
+  return <points ref={ref} geometry={geo} material={mat} position={outro ? OUTRO_POS : [0, 1.7, 0]} frustumCulled={false} />;
 }

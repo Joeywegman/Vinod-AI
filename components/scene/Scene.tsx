@@ -24,6 +24,7 @@ export default function Scene({ q }: { q: Quality }) {
       <fogExp2 attach="fog" args={["#04070d", 0.017]} />
       <CameraRig />
       <NameParticles q={q} />
+      <NameParticles q={q} outro />
       <LogoParticles q={q} />
       <Hall />
       <Coolant q={q} />
