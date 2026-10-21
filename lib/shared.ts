@@ -4,8 +4,8 @@ import * as THREE from "three";
 export const shared = {
   uTime: { value: 0 },
   uCamS: { value: 0 },
-  uFogColor: { value: new THREE.Color("#04070d") },
-  uFogDensity: { value: 0.017 },
+  uFogColor: { value: new THREE.Color("#efefec") },
+  uFogDensity: { value: 0.0065 },
 };
 
 export const glslCommon = /* glsl */ `
@@ -32,7 +32,7 @@ export function shaderMat(
   });
 }
 
-export type Quality = { mobile: boolean; name: number; logo: number; dust: number; flow: number; bloom: boolean; maxDpr: number };
+export type Quality = { mobile: boolean; name: number; logo: number; dust: number; shadows: boolean; maxDpr: number };
 
 export function detectQuality(): Quality {
   const force = typeof window !== "undefined" ? new URLSearchParams(location.search).get("q") : null;
@@ -42,6 +42,6 @@ export function detectQuality(): Quality {
     typeof window !== "undefined" &&
     (window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches || (navigator.hardwareConcurrency || 8) <= 4));
   return mobile
-    ? { mobile, name: 9000, logo: 5500, dust: 1500, flow: 2400, bloom: false, maxDpr: 1.5 }
-    : { mobile, name: 26000, logo: 10000, dust: 4500, flow: 7000, bloom: true, maxDpr: 1.75 };
+    ? { mobile, name: 9000, logo: 5500, dust: 800, shadows: false, maxDpr: 1.5 }
+    : { mobile, name: 26000, logo: 10000, dust: 2000, shadows: true, maxDpr: 1.75 };
 }

@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { camPath, CORE_POS, PATH_LEN, scrollToT } from "@/lib/path";
+import { camPath, PATH_LEN, scrollToT, TOP_POS } from "@/lib/path";
 import { scrollState } from "@/lib/scroll";
 import { shared } from "@/lib/shared";
 
@@ -15,9 +15,7 @@ const ss = (a: number, b: number, x: number) => {
   return t * t * (3 - 2 * t);
 };
 
-export default function CameraRig() {
-  const cyan = useRef<THREE.PointLight>(null);
-  const warm = useRef<THREE.PointLight>(null);
+export default function CameraRig({ shadows }: { shadows: boolean }) {
   const speed = useRef(0);
   const lastT = useRef(0);
   const mouse = useRef(new THREE.Vector2());
@@ -31,7 +29,9 @@ export default function CameraRig() {
     camPath.getPointAt(t, pos);
     camPath.getTangentAt(t, tan);
     look.copy(pos).addScaledVector(tan, 10);
-    look.lerp(CORE_POS, ss(0.88, 1, t));
+    // tilt up at the start so the tower fills the frame behind the name
+    look.y += 5 * (1 - ss(0.05, 0.22, t));
+    look.lerp(TOP_POS, ss(0.88, 1, t));
 
     mouse.current.lerp(state.pointer, 1 - Math.exp(-dt * 3));
     const cam = state.camera as THREE.PerspectiveCamera;
@@ -42,22 +42,29 @@ export default function CameraRig() {
     const v = Math.abs(t - lastT.current) / Math.max(dt, 1e-3);
     lastT.current = t;
     speed.current += (Math.min(v * 12, 1) - speed.current) * (1 - Math.exp(-dt * 3));
-    cam.rotateZ(Math.sin(t * 38) * 0.012 * speed.current + mouse.current.x * -0.02);
-    const fov = 56 + speed.current * 14;
+    cam.rotateZ(Math.sin(t * 30) * 0.015 * speed.current + mouse.current.x * -0.02);
+    const fov = 56 + speed.current * 12;
     if (Math.abs(cam.fov - fov) > 0.05) {
       cam.fov = fov;
       cam.updateProjectionMatrix();
     }
-    cyan.current?.position.copy(pos).addScaledVector(tan, 3).setY(pos.y + 1);
-    warm.current?.position.copy(pos).addScaledVector(tan, -4).setY(pos.y + 2.5);
   });
 
   return (
     <>
-      <ambientLight intensity={0.5} color="#5f86b4" />
-      <hemisphereLight args={["#4a7bb5", "#0a0f18", 0.6]} />
-      <pointLight ref={cyan} color="#33d6ff" intensity={110} distance={32} decay={2} />
-      <pointLight ref={warm} color="#ff9650" intensity={60} distance={26} decay={2} />
+      <hemisphereLight args={["#ffffff", "#9a9a96", 1.6]} />
+      <directionalLight
+        position={[-40, 80, 50]}
+        intensity={2.2}
+        castShadow={shadows}
+        shadow-mapSize={[2048, 2048]}
+        shadow-camera-left={-40}
+        shadow-camera-right={40}
+        shadow-camera-top={70}
+        shadow-camera-bottom={-20}
+        shadow-camera-far={220}
+        shadow-bias={-0.0004}
+      />
     </>
   );
 }

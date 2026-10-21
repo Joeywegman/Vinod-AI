@@ -1,5 +1,5 @@
 type Draw = (c: CanvasRenderingContext2D) => void;
-export type Logo = { name: string; tint: [number, number, number]; draw: Draw };
+export type Logo = { name: string; draw: Draw };
 
 const rr = (c: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) => {
   c.beginPath();
@@ -24,10 +24,10 @@ const cut = (c: CanvasRenderingContext2D, fn: () => void) => {
 };
 
 export const LOGOS: Logo[] = [
-  { name: "Claude", tint: [1, 0.55, 0.3], draw: (c) => rays(c, 12, 24, (i) => (i % 2 ? 98 : 80), 13) },
+  { name: "Claude", draw: (c) => rays(c, 12, 24, (i) => (i % 2 ? 98 : 80), 13) },
   {
     name: "ChatGPT / Codex",
-    tint: [0.4, 1, 0.8],
+   
     draw: (c) => {
       c.lineWidth = 12;
       c.lineJoin = "round";
@@ -44,7 +44,7 @@ export const LOGOS: Logo[] = [
   },
   {
     name: "Replit Agent",
-    tint: [1, 0.5, 0.25],
+   
     draw: (c) => {
       rr(c, 44, 40, 100, 48, 8);
       rr(c, 44, 104, 62, 48, 8);
@@ -54,7 +54,7 @@ export const LOGOS: Logo[] = [
   },
   {
     name: "Base44",
-    tint: [1, 0.7, 0.35],
+   
     draw: (c) => {
       c.beginPath();
       c.arc(128, 116, 92, Math.PI, Math.PI * 2);
@@ -66,7 +66,7 @@ export const LOGOS: Logo[] = [
   },
   {
     name: "Wispr Flow",
-    tint: [0.5, 0.85, 1],
+   
     draw: (c) => {
       const h = [40, 92, 62, 134, 104, 158, 72, 116, 50];
       h.forEach((v, i) => rr(c, 22 + i * 24, 128 - v / 2, 15, v, 7));
@@ -74,7 +74,7 @@ export const LOGOS: Logo[] = [
   },
   {
     name: "Lovable",
-    tint: [1, 0.45, 0.6],
+   
     draw: (c) => {
       c.beginPath();
       c.moveTo(128, 218);
@@ -87,7 +87,7 @@ export const LOGOS: Logo[] = [
   },
   {
     name: "Composio",
-    tint: [0.6, 0.9, 1],
+   
     draw: (c) => {
       rr(c, 36, 36, 184, 184, 24);
       cut(c, () => {
@@ -96,10 +96,10 @@ export const LOGOS: Logo[] = [
       });
     },
   },
-  { name: "Apollo", tint: [1, 0.85, 0.3], draw: (c) => rays(c, 8, 34, () => 100, 18) },
+  { name: "Apollo", draw: (c) => rays(c, 8, 34, () => 100, 18) },
   {
     name: "Gemini",
-    tint: [0.55, 0.65, 1],
+   
     draw: (c) => {
       c.beginPath();
       c.moveTo(128, 16);
@@ -112,7 +112,7 @@ export const LOGOS: Logo[] = [
   },
   {
     name: "Canva",
-    tint: [0.5, 0.8, 1],
+   
     draw: (c) => {
       c.beginPath();
       c.arc(128, 128, 104, 0, Math.PI * 2);
@@ -127,7 +127,7 @@ export const LOGOS: Logo[] = [
   },
   {
     name: "Vercel",
-    tint: [1, 1, 1],
+   
     draw: (c) => {
       c.beginPath();
       c.moveTo(128, 30);
@@ -139,7 +139,7 @@ export const LOGOS: Logo[] = [
   },
   {
     name: "GitHub",
-    tint: [0.8, 0.9, 1],
+   
     draw: (c) => {
       c.beginPath();
       c.arc(128, 132, 100, 0, Math.PI * 2);
@@ -167,7 +167,7 @@ export const LOGOS: Logo[] = [
   },
   {
     name: "Supabase",
-    tint: [0.3, 1, 0.6],
+   
     draw: (c) => {
       c.beginPath();
       [[152, 18], [48, 140], [122, 140], [104, 238], [208, 112], [134, 112]].forEach(([x, y], i) =>

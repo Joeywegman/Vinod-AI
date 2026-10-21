@@ -20,8 +20,7 @@ function hasWebGL() {
 function Poster() {
   return (
     <div className="poster" role="img" aria-label="Vinod-AI">
-      <div className="poster-grid" />
-      <h1 className="poster-title">VINOD-AI</h1>
+      <h1 className="sr-only">Vinod-AI</h1>
     </div>
   );
 }
@@ -64,6 +63,7 @@ export default function Experience() {
       <h1 className="sr-only">Vinod-AI</h1>
       {mode === "webgl" && q && <Scene q={q} />}
       <div style={{ height: "900vh" }} aria-hidden />
+      <div className="film" aria-hidden />
       <div className="hud" aria-hidden>
         <span className="hint" style={{ opacity: pct < 3 ? 1 : 0 }}>SCROLL</span>
         <div className="rail"><i style={{ height: `${pct}%` }} /></div>

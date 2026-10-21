@@ -1,9 +1,11 @@
 import * as THREE from "three";
 
+// Camera route: approach the tower, pass under the arch, climb through
+// the legs and platforms, up the shaft, then out through the lattice.
 const pts: [number, number, number][] = [
-  [0, 1.7, 18], [0, 1.7, 10], [0, 1.7, 1], [0, 1.8, -10], [0.5, 1.9, -26],
-  [-0.6, 2.4, -42], [0.3, 3.2, -58], [0, 4.2, -72], [0, 3.0, -88],
-  [0.8, 1.9, -104], [-0.6, 1.9, -120], [0, 2.4, -138], [0, 2.8, -152], [0, 3.0, -166],
+  [0, 8, 62], [0, 7.5, 50], [0, 7, 38], [0, 5.5, 24], [0, 4.5, 12], [-1.5, 6, 2],
+  [2.5, 9, -3], [3, 13.5, 1], [-1, 18, 3], [-2, 23, 0], [1, 29, -1.5], [0.5, 36, 0.5],
+  [0, 42, 0], [1.5, 47, 3], [4, 52, 10], [3, 56, 20], [0, 59, 32],
 ];
 
 export const camPath = new THREE.CatmullRomCurve3(
@@ -19,8 +21,10 @@ export const T_START = 0.08;
 
 /** logos sit at these path fractions; the camera slows down shortly before each one */
 export const LOGO_COUNT = 13;
+/** distance in front of a logo where the camera lingers */
+export const LOGO_DIST = 12;
 export const logoT = (i: number) => 0.26 + (i / (LOGO_COUNT - 1)) * 0.68;
-export const dwellT = (i: number) => logoT(i) - 17 / PATH_LEN;
+export const dwellT = (i: number) => logoT(i) - LOGO_DIST / PATH_LEN;
 
 const N = 800;
 const cum = new Float32Array(N + 1);
@@ -57,6 +61,5 @@ export function tToScroll(t: number) {
   return T_START + (1 - T_START) * (c / cum[N]);
 }
 
-export const HALL_START = -12;
-export const HALL_END = -162;
-export const CORE_POS = new THREE.Vector3(0, 3.2, -186);
+/** where the camera looks at the end of the flight */
+export const TOP_POS = new THREE.Vector3(0, 56, 0);

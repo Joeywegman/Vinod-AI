@@ -55,23 +55,20 @@ void main(){
   p += dir * uDisperse * uDisperse * (12. + aRand.y * 42.);
   vec4 mv = modelViewMatrix * vec4(p, 1.);
   gl_Position = projectionMatrix * mv;
-  gl_PointSize = clamp((1.3 + aRand.w * 2.2) * uPixel * (32. / -mv.z), 1., 15. * uPixel);
-  vec3 far = vec3(.12, .45, 1.);
-  vec3 near = mix(vec3(.35, .95, 1.), vec3(1.), aRand.z * .5);
-  vColor = mix(far, near, e);
-  if (aRand.y > .93) vColor = mix(vColor, vec3(1., .55, .2), e);
-  vAlpha = (.35 + .65 * e) * (1. - uDisperse);
+  gl_PointSize = clamp((1.1 + aRand.w * 1.6) * uPixel * (32. / -mv.z), 1., 10. * uPixel);
+  vColor = vec3(mix(.42, .05, e) + aRand.z * .12);
+  vAlpha = (.25 + .7 * e) * (1. - uDisperse);
 }`;
 const frag = /* glsl */ `
 varying vec3 vColor; varying float vAlpha;
 void main(){
   float d = length(gl_PointCoord - .5);
   float a = 1. - smoothstep(.0, .5, d);
-  gl_FragColor = vec4(vColor * 0.7, vAlpha * a);
+  gl_FragColor = vec4(vColor, vAlpha * a);
   #include <colorspace_fragment>
 }`;
 
-const OUTRO_POS: [number, number, number] = [0, 3.2, -178];
+const OUTRO_POS: [number, number, number] = [0, 58, 16];
 
 export default function NameParticles({ q, outro = false }: { q: Quality; outro?: boolean }) {
   const ref = useRef<THREE.Points>(null);
@@ -87,8 +84,8 @@ export default function NameParticles({ q, outro = false }: { q: Quality; outro?
       const ph = Math.acos(2 * Math.random() - 1);
       start[i * 3] = r * Math.sin(ph) * Math.cos(th);
       start[i * 3 + 1] = r * Math.sin(ph) * Math.sin(th) * (outro ? 1 : 0.7);
-      // outro: burst out of the core, which sits 8 units behind the name
-      start[i * 3 + 2] = r * Math.cos(ph) - (outro ? 8 : 20);
+      // outro: burst out of the tower top, which sits 16 units behind the name
+      start[i * 3 + 2] = r * Math.cos(ph) - (outro ? 16 : 20);
       for (let k = 0; k < 4; k++) rand[i * 4 + k] = Math.random();
     }
     const g = new THREE.BufferGeometry();
@@ -100,7 +97,7 @@ export default function NameParticles({ q, outro = false }: { q: Quality; outro?
       vert,
       frag,
       { uForm: { value: 0 }, uDisperse: { value: 0 }, uPixel: { value: 1 } },
-      { transparent: true, depthWrite: false, blending: THREE.AdditiveBlending },
+      { transparent: true, depthWrite: false, blending: THREE.NormalBlending },
     );
     return { geo: g, mat: m };
   }, [q.name, outro]);
@@ -132,5 +129,5 @@ export default function NameParticles({ q, outro = false }: { q: Quality; outro?
     }
   });
 
-  return <points ref={ref} geometry={geo} material={mat} position={outro ? OUTRO_POS : [0, 1.7, 0]} frustumCulled={false} />;
+  return <points ref={ref} geometry={geo} material={mat} position={outro ? OUTRO_POS : [0, 15, 44]} frustumCulled={false} />;
 }
